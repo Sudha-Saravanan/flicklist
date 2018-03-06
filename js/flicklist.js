@@ -2,84 +2,65 @@
 
 var model = {
   watchlistItems: [],
-  browseItems: [],
-  // DONE
-  // add a new field, browseActiveIndex, initially set to 0
-  browseActiveIndex: 0
+  browseItems: []
 }
 
 
 var api = {
+
   root: "https://api.themoviedb.org/3",
-  token: "8e888fa39ec243e662e1fb738c42ae99",
-  imageBaseUrl: "http://image.tmdb.org/t/p/"
+  token: "TODO", // TODO 0 add your api key
+
+  /**
+   * Given a movie object, returns the url to its poster image
+   */
+  posterUrl: function(movie) {
+    // TODO 4b
+    // implement this function
+
+    return "http://images5.fanpop.com/image/photos/25100000/movie-poster-rapunzel-and-eugene-25184488-300-450.jpg" 
+  }
 }
 
 
-
 /**
- * Makes an AJAX request to the /discover endpoint of the API, using the 
- * keyword ID that was passed in
- *
- * if successful, updates model.browseItems appropriately and then invokes
+ * Makes an AJAX request to themoviedb.org, asking for some movies
+ * if successful, updates the model.browseItems appropriately, and then invokes
  * the callback function that was passed in
  */
-function discoverMovies(data, callback) {
-  // DONE 
+function discoverMovies(callback) {
   $.ajax({
     url: api.root + "/discover/movie",
-    data: data,
+    data: {
+      api_key: api.token
+    },
     success: function(response) {
       model.browseItems = response.results;
       callback(response);
-    },
-    fail: function() {
-      console.log("discover failed");
+      console.log(response);
     }
   });
 }
 
 
-function searchMovies(query, callback) {
-  fetchKeywords(
-    query, 
-    function(keywordsResponse) {
-      console.log("fetch succeeded");
-      var firstKeywordID = keywordsResponse.results[0].id
-      var data = {
-        api_key: api.token,
-        with_keywords: firstKeywordID
-      };
-      discoverMovies(data, callback);
-    },
-    function() {
-      console.log("fetchkeywords failed")
-      var data = {
-        api_key: api.token
-      };
-      discoverMovies(data, callback);
-    }
-  );
-}
-
-
 /**
- * Makes an AJAX request to the /search/keyword endpoint of the API,
- * using the query string that was passed in
+ * Makes an AJAX request to the /search endpoint of the API, using the 
+ * query string that was passed in
  *
- * if successful, invokes the supplied callback function, passing in
- * the API's response.
+ * if successful, updates model.browseItems appropriately and then invokes
+ * the callback function that was passed in
  */
-function fetchKeywords(query, cbSuccess, cbError) {
-  // DONE
+function searchMovies(query, callback) {
   $.ajax({
-    url: api.root + "/search/keyword",
+    url: api.root + "/search/movie",
     data: {
       api_key: api.token,
       query: query
     },
-    success: cbSuccess,
-    error: cbError
+    success: function(response) {
+      model.browseItems = response.results;
+      callback(response);
+    }
   });
 }
 
@@ -88,120 +69,71 @@ function fetchKeywords(query, cbSuccess, cbError) {
  * re-renders the page with new content, based on the current state of the model
  */
 function render() {
-  var watchlistElement = $("#section-watchlist ul");
-  var carouselInner = $("#section-browse .carousel-inner");
-  var browseInfo = $("#browse-info");
 
   // clear everything
-  watchlistElement.empty();
-  carouselInner.empty();
-  browseInfo.empty();
+  $("#section-watchlist ul").empty();
+  $("#section-browse ul").empty();
 
   // insert watchlist items
   model.watchlistItems.forEach(function(movie) {
+    var title = $("<h6></h6>").text(movie.original_title);
 
-    // panel heading
-    var title = $("<h5></h5>").text(movie.original_title);  
-    var panelHeading = $("<div></div>")
-      .attr("class", "panel-heading")
-      .append(title);
+    // TODO 1 
+    // add an "I watched it" button and append it below the title
+    // Clicking should remove this movie from the watchlist and re-render
 
-    // panel body
-    var poster = $("<img></img>")
-      .attr("src", posterUrl(movie, "w300"));
-    var panelBody = $("<div></div>")
-      .attr("class", "panel-body")
-      .append(poster)
-      .append(button);
+    // TODO 2i
+    // apply the classes "btn btn-danger" to the "I watched it button"
 
-    // panel
-    var panel = $("<div></div>")
-      .attr("class", "panel panel-default")
-      .append(panelHeading)
-      .append(panelBody);
+    // TODO 4a
+    // add a poster image and append it inside the 
+    // panel body above the button
 
-
-    var button = $("<button></button>")
-      .text("I watched it")
-      .attr("class", "btn")
-      .click(function() {
-        removeFromWatchlist(movie);
-        render();
-      })
-      .hide();
-
+    // TODO 2g
+    // re-implement the li as a bootstrap panel with a heading and a body
     var itemView = $("<li></li>")
-      .append(panel)
-      .append(button)
-      .mouseover(function() {
-        button.show();
-      })
-      .mouseleave(function() {
-        button.hide();
-      });
+      .append(title)
+      .attr("class", "item-watchlist");
 
-    watchlistElement.append(itemView)
+    $("#section-watchlist ul").append(itemView);
   });
 
   // insert browse items
-  model.browseItems.forEach(function(movie, index) {
-    // DONE
-    // replace the old ul code with new carousel implementation:
-    // create an image with the movie poster
-    // wrap the image inside a div
-    // append the item into the carousel-inner element
+  model.browseItems.forEach(function(movie) {
 
-    var poster = $("<img></img>")
-      .attr("src", posterUrl(movie, "w300"));
-    var carouselItem = $("<div></div>")
-      .attr("class", "item")
-      .append(poster);
-    
-    carouselInner.append(carouselItem);
+    // TODO 2d continued
+    // style this list item to look like the demo
+    // You'll also need to make changes in index.html.
+    // use the following BS classes:
+    // "list-group", "list-group-item", btn", "btn-primary", 
 
-    // DONE
-    // if this index is the current active index,
-    // give this item a class attribute of "active"
-    if (index === model.browseActiveIndex) {
-      carouselItem.attr("class", "item active");
-    }
+    var title = $("<h4></h4>").text(movie.original_title);
 
+    var button = $("<button></button>")
+      .text("Add to Watchlist")
+      .click(function() {
+        model.watchlistItems.push(movie);
+        render();
+      })
+      .prop("disabled", model.watchlistItems.indexOf(movie) !== -1);
+
+    var overview = $("<p></p>").text(movie.overview);
+
+    // append everything to itemView, along with an <hr/>
+    var itemView = $("<li></li>")
+      .append(title)
+      .append(overview)
+      .append(button);
+      
+    // append the itemView to the list
+    $("#section-browse ul").append(itemView);
   });
-
-  // DONE display info for the currently active movie
-  var activeMovie = model.browseItems[model.browseActiveIndex];
-  var title = $("<h3></h3>").text(activeMovie.original_title);
-  var overview = $("<p></p>").text(activeMovie.overview);
-  browseInfo
-    .append(title)
-    .append($("<hr/>"))
-    .append(overview);
   
-  // DONE
-  // disable or enable the Add to Watchlist button depending on
-  // whether the current active movie is already on the user's watchlist
-  var alreadyOnWatchlist = model.watchlistItems.indexOf(activeMovie) !== -1
-  $("#add-to-watchlist").prop("disabled", alreadyOnWatchlist);
 }
 
 
-function posterUrl(movie, width) {
-  return api.imageBaseUrl + width + "/" + movie.poster_path;
-}
-
-
-/**
- * removes the given movie from model.watchlistItems
- */
-function removeFromWatchlist(movie) {
-  // DONE
-  model.watchlistItems = model.watchlistItems.filter(function(item) {
-    return item !== movie;
-  });
-}
-
-function addActiveMovie() {
-  // DONE
-  var activeMovie = model.browseItems[model.browseActiveIndex];
-  model.watchlistItems.push(activeMovie);
-}
+// When the HTML document is ready, we call the discoverMovies function,
+// and pass the render function as its callback
+$(document).ready(function() {
+  discoverMovies(render);
+});
