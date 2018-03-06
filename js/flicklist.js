@@ -3,12 +3,15 @@
 var model = {
   watchlistItems: [],
   browseItems: []
+
+  // TODO 
+  // add a property for the current active movie index
 }
 
 
 var api = {
   root: "https://api.themoviedb.org/3",
-  token: "TODO", // TODO 0 add your api key
+  token: "8e888fa39ec243e662e1fb738c42ae99", // TODO 0 add your api key
   /**
    * Given a movie object, returns the url to its poster image
    */
@@ -19,6 +22,7 @@ var api = {
 }
 
 
+
 /**
  * Makes an AJAX request to themoviedb.org, asking for some movies
  *
@@ -26,18 +30,13 @@ var api = {
  * the callback function that was passed in
  */
 
-// TODO 1
-// this function should accept a second argument, `keywords`
-function discoverMovies(callback) {
-
-  // TODO 2 
-  // ask the API for movies related to the keywords that were passed in above
-  // HINT: add another key/value pair to the `data` argument below
+function discoverMovies(callback, keywords) {
 
   $.ajax({
     url: api.root + "/discover/movie",
     data: {
       api_key: api.token,
+      with_keywords: keywords
     },
     success: function(response) {
       model.browseItems = response.results;
@@ -55,49 +54,23 @@ function discoverMovies(callback) {
  * the API's response.
  */
 function searchMovies(query, callback) {
-  // TODO 3
-  // change the url so that we search for keywords, not movies
-
-
-  // TODO 4
-  // when the response comes back, do all the tasks below:
-
-
-  // TODO 4a
-  // create a new variable called keywordIDs whose value is an array of all the
-  // `.id` values of each of the objects inside reponse.results
-  // HINT use the array map function to map over response.results
-
-
-  // TODO 4b
-  // create a new variable called keywordsString by converting 
-  // the array of ids to a comma-separated string, e.g.
-  //      "192305,210090,210092,210093"
-  // HINT: use the Array join function
-
-
-  // TODO 4c
-  // instead of a comma-separated string, we want the ids
-  // to be spearated with the pipe "|" character, eg:
-  //     "192305|210090|210092|210093"
-  // HINT: pass an argument to the join function
-
-
-  // TODO 4d
-  // when the response comes back, call discoverMovies, 
-  // passing along 2 arguments:
-  // 1) the callback 
-  // 2) the string of keywords
-
 
   $.ajax({
-    url: api.root + "/search/movie",
+    url: api.root + "/search/keyword",
     data: {
       api_key: api.token,
       query: query
     },
     success: function(response) {
       console.log(response);
+    
+      var keywordIDs = response.results.map(function(keywordObj) {
+        return keywordObj.id;
+      });
+      var keywordsString = keywordIDs.join("|");
+      console.log(keywordsString);
+      
+      discoverMovies(callback, keywordsString);
     }
   });
 }
@@ -162,8 +135,7 @@ function render() {
         model.watchlistItems.push(movie);
         render();
       })
-      .prop("disabled", model.watchlistItems.indexOf(movie) !== -1)
-      .attr("class", "btn btn-primary");
+      .prop("disabled", model.watchlistItems.indexOf(movie) !== -1);
 
     var itemView = $("<li></li>")
       .attr("class", "list-group-item")
