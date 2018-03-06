@@ -1,91 +1,82 @@
+
+
 /*
-DONE
-
-Make the browse box red with white text, and no border
-
-make buttons take up all the width of their container
-
-add some margin in between the carousel an the "Add to Watchlist" button
-
-clean up anything no longer in use
+TODO 2c
+Customize the .jumbotron class to have centered text instead of left-aligned
+Also change its bottom margin to 1%
 */
 
-.well {
-	background: red;
-	color: white;
-	border-width: 0px;
-}
 
-.btn {
-	width: 100%;
-}
+/*
+TODO 2h
+Give the Watchlist items some styles:
+- a fixed width of 160px
+- a little bit of margin on the bottom and right edges
+- no padding
+*/
 
-.jumbotron {
-	background: gray;
-	color: white;
-}
 
-#section-watchlist {
+/*
+TODO 2j
+The "I watched it" button should fill the entire width of its container, 
+and should be 10px below the neighbor element above it
+*/
+
+
+/*
+TODO 3c
+Apply text-align: center; to the watchlist
+*/
+
+
+
+.main-content {
 	color: gray;
-	min-height: 300px;
-}
-
-#section-watchlist li {
-	display: inline-block;
-	width: 160px;
-	margin: 10px;
-	position: relative;
-}
-
-#section-watchlist button {
-	position: absolute;
-	bottom: 0px;
-	width: 100%;
-	background: rgba(0,0,0,0.7);
-	color: white;
-	border-radius: 4px;
-	border-top-left-radius: 0px;
-	border-top-right-radius: 0px;
-}
-
-#section-watchlist button:hover {
-	background: red;
-	color: white;
-}
-
-.panel {
-	margin: 0px;
-}
-
-.carousel {
-	max-width: 300px;
-	margin: 0 auto;
-	margin-bottom: 10px;
-}
-
-img {
-	width: 100%;
-	border-radius: 4px;
-}
-
-ul {
-	padding: 0px;
 }
 
 #section-browse {
-	background: black;
+	background: black;	
 }
 
-header {
+#section-browse form {
+	margin-bottom: 2%;
+}
+
+hr {
+	border-color: rgba(128,128,128,0.2);
+}
+
+section header {
+	margin-bottom: 10px;
+}
+
+section {
+	padding: 2%;
+}
+
+
+/*
+TODO 5
+Delete everything else below! 
+The Bootstrap classes have made this stuff no longer relevant
+*/
+
+ul {
+	padding-left: 0px;
+}
+
+button:disabled {
+	opacity: 0.5;
+}
+
+button, input[type="submit"] {
+	padding: 10px;
+	background: orange;
+	border-width: 0px;
+	color: white;
+}
+
+#section-browse li {
 	margin-bottom: 40px;
-	color: gray;
-}
-
-section, .jumbotron {
-	padding: 20px;
-}
-
-footer {
-	text-align: center;
-	margin-top: 60px;
+	list-style: none;
 }
